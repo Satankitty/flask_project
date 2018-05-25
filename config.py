@@ -50,3 +50,10 @@ class UnittestConfig(Config):
     TESTING = True
     # 指定测试环境中的数据库
     SQLALCHEMY_DATABASE_URI = "mysql://root:mysql@127.0.0.1:3306/flask_project_testing"
+
+configs = {
+    'dev': DevelopmentConfig,
+    'pro': ProductionConfig,
+    'unit': UnittestConfig
+
+}
