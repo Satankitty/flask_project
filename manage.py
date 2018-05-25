@@ -2,15 +2,10 @@ from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from redis import StrictRedis
 from flask_wtf import CSRFProtect
-
+from config  import Config
 from flask_session import Session
 from flask_script import Manager
 from flask_migrate import Migrate, MigrateCommand
-
-
-
-
-
 
 
 app = Flask(__name__)
@@ -37,7 +32,6 @@ manger.add_command("mysal", MigrateCommand)
 
 @app.route('/')
 def index():
-
 
     return 'index'
     redis_store.set("name", "zhangsan")
