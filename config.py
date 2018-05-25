@@ -10,11 +10,9 @@ class Config(object):
     SECRET_KEY = base64.b64encode(os.urandom(148))
     # 开启调试模式
     DEBUG = True
-
     # 配置MySQL的数据库，其=》app.config[SQLALCHEMY_TRACK_MODIFICATIONS] = False 可以从SQLAlchemy源码查看
 
     SQLALCHEMY_DATABASE_URI = "mysql://root:mysql@127.0.0.1:3306/flask_project"
-
     # 不追踪数据库的更改，因为会明显的内存开销
     SQLALCHEMY_TRACK_MODIFICATIONS = Flask
 
@@ -32,3 +30,23 @@ class Config(object):
     SESSION_PERMANENT = True
     # 设置session的有效时间为7天
     PERMANENT_SESSION_LIFETIME = 60*60*24*7
+
+
+class DevelopmentConfig(Config):
+    """开发环境下的配置"""
+    pass
+
+
+class ProductionConfig(Config):
+    """生产环境中"""
+    # 关闭调试模式
+    DEBUG = False
+    # 指定生产环境下的数据库
+    SQLALCHEMY_DATABASE_URI = "mysql://root:mysql@127.0.0.1:3306/flask_project_pro"
+
+
+class UnittestConfig(Config):
+    """测试环境"""
+    TESTING = True
+    # 指定测试环境中的数据库
+    SQLALCHEMY_DATABASE_URI = "mysql://root:mysql@127.0.0.1:3306/flask_project_testing"
