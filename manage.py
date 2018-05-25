@@ -3,6 +3,7 @@ from flask_sqlalchemy import SQLAlchemy
 from redis import StrictRedis
 from flask_wtf import CSRFProtect
 import os,base64
+from flask_session import Session
 
 
 
@@ -25,6 +26,18 @@ class Config(object):
     # 配置Redis的数据库
     REDIS_HOST = '127.0.0.1'
     REDIS_PORT = 6379
+    # 配置flask session数据库将session写入到数据库的redis数据库
+    # 指定session的数据存储在redis
+    SESSION_TYPE = "redis"
+    # 告诉session 服务器的位置
+    SESSION_REDIS = StrictRedis(host=REDIS_HOST, port=REDIS_PORT)
+    # 将session 签名后再存储
+    SESSION_USE_SIGNER = True
+
+    SESSION_PERMANENT = True
+    # 设置session的有效时间为7天
+    PERMANENT_SESSION_LIFETIME = 60*60*24*7
+
 
 
 
@@ -38,14 +51,18 @@ db = SQLAlchemy(app)
 # 创建连接到Redis的数据库对象
 redis_store = StrictRedis(host=Config.REDIS_HOST, port=Config.REDIS_PORT)
 
-#开启 CSRF保护：当不适用flaskForm表单类， 但是需要用post请求方法是需自己开启CSRF保护
+# 开启 CSRF保护：当不适用flaskForm表单类， 但是需要用post请求方法是需自己开启CSRF保护
 CSRFProtect(app)
 
+# 配置flask session 将session 数据写入到服务器的redis的数据库
+Session(app)
 
 @app.route('/')
 def index():
+
     return 'index'
     redis_store.set("name", "zhangsan")
+
 
 if __name__ == '__main__':
     app.run()
