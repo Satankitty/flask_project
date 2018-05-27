@@ -1,6 +1,7 @@
 import os,base64
-from flask import Flask, logging
+from flask import Flask
 from redis import StrictRedis
+import logging
 
 
 class Config(object):
