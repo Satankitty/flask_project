@@ -1,5 +1,5 @@
 import os,base64
-from flask import Flask
+from flask import Flask, logging
 from redis import StrictRedis
 
 
@@ -34,7 +34,7 @@ class Config(object):
 
 class DevelopmentConfig(Config):
     """开发环境下的配置"""
-    pass
+    LOGGING_LEVEL = logging.DEBUG
 
 
 class ProductionConfig(Config):
@@ -43,6 +43,7 @@ class ProductionConfig(Config):
     DEBUG = False
     # 指定生产环境下的数据库
     SQLALCHEMY_DATABASE_URI = "mysql://root:mysql@127.0.0.1:3306/flask_project_pro"
+    LOGGING_LEVEL = logging.WARN
 
 
 class UnittestConfig(Config):
@@ -50,6 +51,8 @@ class UnittestConfig(Config):
     TESTING = True
     # 指定测试环境中的数据库
     SQLALCHEMY_DATABASE_URI = "mysql://root:mysql@127.0.0.1:3306/flask_project_testing"
+    LOGGING_LEVEL = logging.DEBUG
+
 
 configs = {
     'dev': DevelopmentConfig,
