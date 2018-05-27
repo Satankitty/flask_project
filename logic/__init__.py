@@ -46,4 +46,7 @@ def create_app(config_name):
 
     # 配置flask session 将session 数据写入到服务器的redis的数据库
     Session(app)
+    # 蓝图注册到路由
+    from logic.modules.index import index_blue
+    app.register_blueprint(index_blue)
     return app
