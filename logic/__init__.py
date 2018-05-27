@@ -1,10 +1,23 @@
+from logging.handlers import RotatingFileHandler
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from redis import StrictRedis
 from flask_wtf import CSRFProtect
 from flask_session import Session
 from config import configs
+import logging
 
+
+# 设置日志的记录等级
+logging.basicConfig(level=logging.DEBUG)
+# 创建日志记录器, 指明日志保存的路径 每个日志文件的最大大小 保存日志文件个数上限
+file_log_handler = RotatingFileHandler("logs/log", maxBytes=1024*1024*100, backupCount=10)
+# 创建日志的格式
+formatter = logging.Formatter('%(levelname)s %(filename)s:%(lineno)d %(message)s')
+# 为刚创建的日志设置日志记录格式
+file_log_handler.setFormatter(formatter)
+# 为全局的日志工具对象(flask app 使用的)添加日志记录器
+logging.getLogger().addHandler(file_log_handler)
 
 # 创建SQLAlchemy的对象
 db = SQLAlchemy()
