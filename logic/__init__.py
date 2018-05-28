@@ -24,7 +24,7 @@ def setuploggin(level):
 # 创建SQLAlchemy的对象
 db = SQLAlchemy()
 # 创建redis的对象
-redis_store = StrictRedis()
+redis_store = None
 
 
 def create_app(config_name):
@@ -38,8 +38,9 @@ def create_app(config_name):
     db.init_app(app)
 
     # 创建连接到Redis的数据库对象
-    # redis_store = StrictRedis(host=configs[config_name].REDIS_HOST, port=configs[config_name].REDIS_PORT)
-    redis_store.__init__(host=configs[config_name].REDIS_HOST, port=configs[config_name].REDIS_PORT)
+    global redis_store
+    redis_store = StrictRedis(host=configs[config_name].REDIS_HOST, port=configs[config_name].REDIS_PORT)
+    # redis_store.__init__(host=configs[config_name].REDIS_HOST, port=configs[config_name].REDIS_PORT)
 
     # 开启 CSRF保护：当不适用flaskForm表单类， 但是需要用post请求方法是需自己开启CSRF保护
     CSRFProtect(app)
