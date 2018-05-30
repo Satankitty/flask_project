@@ -9,6 +9,6 @@ def index():
     return render_template('news/index.html')
 
 
-# @index_blue.route('/favicon.ico', methods=['GET'] )
-# def favicon():
-#     return current_app.send_static_file('news/favicon.ico')
+@index_blue.route('/favicon.ico', methods=['GET'] )
+def favicon():
+    return current_app.send_static_file('news/favicon.ico')

@@ -50,4 +50,6 @@ def create_app(config_name):
     # 蓝图注册到路由
     from logic.modules.index import index_blue
     app.register_blueprint(index_blue)
+    from logic.modules.passport import psssport_blue
+    app.register_blueprint(psssport_blue)
     return app
