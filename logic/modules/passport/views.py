@@ -35,6 +35,7 @@ def image_code():
     return response
 
 
+@psssport_blue.route('/sms_code',methods = ['POST'])
 def sms_code():
     """发送短信验证码
     1.接受参数(手机号,图片验证码,图片验证码编号)
