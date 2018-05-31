@@ -203,7 +203,7 @@ function sendSMSCode() {
         success:function (response) {
             if (response.errno == '0') {
                 //进入倒计时
-                var num = 15;
+                var num = 60;
                 var t = setInterval(function () {
                     if (num == 1 ){
                         clearInterval(t);
