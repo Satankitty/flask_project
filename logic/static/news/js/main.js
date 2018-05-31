@@ -165,7 +165,7 @@ function generateImageCode() {
     //生成uuid 作为图片验证码的唯一标示
     imageCodeId = generateUUID();
     //url
-    var url = '/passport/image_code?]='+imageCodeId;
+    var url = '/passport/image_code?imageCodeId='+imageCodeId;
     //让img标签主动向url发送请求;将url赋值给src属性
     $('.get_pic_code').attr('src', url)
 }
@@ -188,8 +188,43 @@ function sendSMSCode() {
         $(".get_code").attr("onclick", "sendSMSCode();");
         return;
     }
-
+    var params = {
+        'mobile': mobile,
+        'image_code': imageCode,
+        'image_code_id':imageCodeId
+    }
     // TODO 发送短信验证码
+    // TODO 发送短信验证码
+    $.ajax({
+        url:'/passport/sms_code', // 请求地址
+        type:'post',
+        data:JSON.stringify(params),
+        contentType:'application/json',
+        success:function (response) {
+            if (response.errno == '0') {
+                //进入倒计时
+                var num = 15;
+                var t = setInterval(function () {
+                    if (num == 1 ){
+                        clearInterval(t);
+                        generateImageCode();
+                        $('.get_code').html('点击获取验证码');
+                        $('.get_code').attr('onclick', 'sendSMSCode();');
+                    }else {
+                        $('.get_code').html(num + '秒');
+
+                    }
+                    num -=1;
+                },1000);
+
+                alert(response.errmsg);
+            } else {
+                alert(response.errmsg);
+                generateImageCode();
+                $('.get_code').attr('onclick', 'sendSMSCode();');
+            }
+        }
+    });
 }
 
 // 调用该函数模拟点击左侧按钮
