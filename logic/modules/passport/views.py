@@ -2,13 +2,13 @@
 import re, random,datetime
 from flask import request, abort, current_app, make_response, jsonify, json, session
 from logic.utils.captcha.captcha import captcha
-from . import psssport_blue
+from . import passport_blue
 from logic import redis_store, constants, response_code, db
 from logic.libs.yuntongxun.sms import CCP
 from logic.models import User
 
 
-@psssport_blue.route('/image_code', )
+@passport_blue.route('/image_code', )
 def image_code():
     """提供图片验证码
     1.接收参数(图片验证码唯一标示 uuid
@@ -38,7 +38,7 @@ def image_code():
     return response
 
 
-@psssport_blue.route('/sms_code', methods=['POST'])
+@passport_blue.route('/sms_code', methods=['POST'])
 def sms_code():
     """发送短信验证码
     1.接受参数（手机号，图片验证码，图片验证码编号）
@@ -99,7 +99,7 @@ def sms_code():
     return jsonify(errno=response_code.RET.OK, errmsg='发送短信验证码成功')
 
 
-@psssport_blue.route('/register', methods = ['POST'])
+@passport_blue.route('/register', methods = ['POST'])
 def register():
     """注册
     1. 接收参数(手机号, 短信验证码, 密码(明文))
@@ -138,7 +138,7 @@ def register():
     user = User()
     user.mobile = mobile
     user.nick_name = mobile
-    # user.password_hash = password
+    user.password = password
     user.last_login = datetime.datetime.now()
     # 6.同步数据模型到数据库
     try:
@@ -153,5 +153,5 @@ def register():
     session['mobile'] = user.mobile
     session['nick_name'] = user.nick_name
     # 8. 返回注册结果
-    jsonify(errno =response_code.RET.OK, errmsg = '注册成功' )
+    return jsonify(errno =response_code.RET.OK, errmsg = '注册成功' )
 

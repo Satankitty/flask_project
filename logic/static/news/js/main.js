@@ -153,7 +153,28 @@ $(function(){
             return;
         }
 
+        var params = {
+            'mobile': mobile,
+            'smscode':smscode,
+            'password':password
+
+        }
         // 发起注册请求
+        $.ajax({
+            url:'/passport/register', //请求地址
+            type:'post',
+            data:JSON.stringify(params),
+            contentType:'application/json',
+            success:function (response) {
+                if (response.errno =="0"){
+                    //注册成功
+                    location.reload()
+                }else{
+                    //注册失败
+                    alert(response.errmsg);
+                }
+            }
+        })
 
     })
 })
