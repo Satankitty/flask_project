@@ -7,6 +7,7 @@ from flask_session import Session
 from config import configs
 import logging
 from flask_wtf import csrf
+from logic.utils.comment import do_rank
 
 def setuploggin(level):
     # 设置日志的记录等级
@@ -44,8 +45,11 @@ def create_app(config_name):
 
     # 开启 CSRF保护：当不适用flaskForm表单类， 但是需要用post请求方法是需自己开启CSRF保护
     CSRFProtect(app)
-    # 业务逻辑一开始,通过请求钩子在每次请求结束后写入cookie
 
+    # 将过滤器函数变成模板可以使用的过滤器
+    app.add_template_filter(do_rank, 'rank')
+
+    # 业务逻辑一开始,通过请求钩子在每次请求结束后写入cookie
     @app.after_request
     def after_request(response):
         # 1.生成csrf_token
