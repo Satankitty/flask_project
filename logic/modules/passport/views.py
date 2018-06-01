@@ -155,3 +155,43 @@ def register():
     # 8. 返回注册结果
     return jsonify(errno =response_code.RET.OK, errmsg = '注册成功' )
 
+
+@passport_blue.route('/login', methods = ['POST'])
+def login():
+    """登录"""
+    # 1. 接收参数(手机号, 密码(明文))
+    json_dict = request.json
+    mobile = json_dict.get('mobile')
+    password = json_dict.get('password')
+
+    # 2. 校验参数(判断参数是否齐全,手机号是否合法)
+    if not all([mobile, password]):
+        return jsonify(errno =response_code.RET.PARAMERR, errmsg = '缺少参数' )
+    if not re.match(r'^1[345678][0-9]{9}$', mobile):
+        return jsonify(errno=response_code.RET.PARAMERR, errmsg='手机号格式错误')
+    # 3. 使用手机号查询用户信息
+    try:
+        user = User.query.filter(User.mobile == mobile).first()
+    except Exception as e:
+        current_app.logger.error(e)
+        return jsonify(errno =response_code.RET.DBERR, errmsg = '查询用户数据失败' )
+    if not user:
+        return jsonify(errno =response_code.RET.PARAMERR, errmsg = '用户名或密码错误' )
+    # 4. 匹配该要登录用户的密码
+    if not user.check_passowrd(password):
+        return jsonify(errno =response_code.RET.PWDERR, errmsg = '用户名或密码错误' )
+    # 5 更新最后一次的登录时间
+    user.last_login = datetime.datetime.now()
+    try:
+        db.session.commit()
+    except Exception as e:
+        current_app.logger.error(e)
+        db.session.rollback()
+        return jsonify(errno =response_code.RET.DBERR, errmsg = '更新最后一次的登录时间失败' )
+    # 6. 将状态保持数据写入session
+    session['user_id'] = user.id
+    session['mobile'] = user.mobile
+    session['nick_name'] = user.nick_name
+
+    # 7. 相应登录结果
+    return jsonify(errno =response_code.RET.OK, errmsg = '登录成功' )
