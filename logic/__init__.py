@@ -6,7 +6,7 @@ from flask_wtf import CSRFProtect
 from flask_session import Session
 from config import configs
 import logging
-
+from flask_wtf import csrf
 
 def setuploggin(level):
     # 设置日志的记录等级
@@ -43,7 +43,17 @@ def create_app(config_name):
     # redis_store.__init__(host=configs[config_name].REDIS_HOST, port=configs[config_name].REDIS_PORT)
 
     # 开启 CSRF保护：当不适用flaskForm表单类， 但是需要用post请求方法是需自己开启CSRF保护
-    # CSRFProtect(app)
+    CSRFProtect(app)
+    # 业务逻辑一开始,通过请求钩子在每次请求结束后写入cookie
+
+    @app.after_request
+    def after_request(response):
+        # 1.生成csrf_token
+        csrf_token = csrf.generate_csrf()
+        #2. 将csrf_token写入到浏览器
+        response.set_cookie('csrf_token', csrf_token)
+        return response
+
 
     # 配置flask session 将session 数据写入到服务器的redis的数据库
     Session(app)
