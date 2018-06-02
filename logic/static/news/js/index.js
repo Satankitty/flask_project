@@ -1,7 +1,7 @@
 var currentCid = 1; // 当前分类 id
 var cur_page = 1; // 当前页
 var total_page = 1;  // 总页数
-var data_querying = true;   // 是否正在向后台获取数据
+var data_querying = true;   // 是否正在向后台获取数据,不能上拉
 
 
 $(function () {
@@ -42,7 +42,15 @@ $(function () {
 
         if ((canScrollHeight - nowScroll) < 100) {
             // TODO 判断页数，去更新新闻数据
+            if (!data_querying){
+                data_querying = true;
+                cur_page +=1;
+                if (cur_page < total_page){
+                    updateNewsData()
+                }
 
+
+            }
 
         }
     })
@@ -55,7 +63,10 @@ function updateNewsData() {
                 'page':cur_page
             };
             $.get('/news_list',params,function (response) {
+                // 能够执行到这里说明数据加载完成,有可能成功,有可能失败
+                data_querying = false;
                 if (response.errno =='0'){
+                    total_page = response.data.totle_page;
                     for (var i=0;i<response.data.news_dict_List.length;i++) {
                 var news = response.data.news_dict_List[i]
                 var content = '<li>'
