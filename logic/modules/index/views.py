@@ -1,7 +1,7 @@
 # 视图函数
 # 导入蓝图对象
 from logic import constants, response_code
-from logic.models import User, News
+from logic.models import User, News, Category
 from . import index_blue
 from flask import render_template, current_app, session, request, jsonify
 
@@ -48,7 +48,8 @@ def index():
     """主页浏览器右上角用户信息:
     1. 如果未登陆主页右上角显示登陆,注册
     反之,显示用户名
-    2.点击排行 """
+    2.点击排行
+    3. 查询和展示新闻分类标签"""
     # 1. 从session中取出user_id
     user_id = session.get('user_id', None)
     user = None
@@ -63,11 +64,18 @@ def index():
         news_clicks = News.query.order_by(News.clicks.desc()).limit(constants.CLICK_RANK_MAX_NEWS)
     except Exception as e:
         current_app.logger.error(e)
+    # 3. 查询和展示新闻分类标签
+    categories = []
+    try:
+        categories = Category.query.all()
+    except Exception as e:
+        current_app.logger.error(e)
 
-
+    # 构造模板上下文
     context={
         'user':user,
-        'news_clicks':news_clicks
+        'news_clicks':news_clicks,
+        'categories':categories
     }
 
 

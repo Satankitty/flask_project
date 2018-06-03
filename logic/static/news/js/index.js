@@ -66,13 +66,16 @@ function updateNewsData() {
                 // 能够执行到这里说明数据加载完成,有可能成功,有可能失败
                 data_querying = false;
                 if (response.errno =='0'){
+                    if (cur_page == 1){
+                     $(".list_con").html('')
+                    }
                     total_page = response.data.totle_page;
                     for (var i=0;i<response.data.news_dict_List.length;i++) {
                 var news = response.data.news_dict_List[i]
                 var content = '<li>'
-                content += '<a href="#" class="news_pic fl"><img src="' + news.index_image_url + '?imageView2/1/w/170/h/170"></a>'
-                content += '<a href="#" class="news_title fl">' + news.title + '</a>'
-                content += '<a href="#" class="news_detail fl">' + news.digest + '</a>'
+                content += '<a href="/news/detail/'+news.id+'" class="news_pic fl"><img src="' + news.index_image_url + '?imageView2/1/w/170/h/170"></a>'
+                content += '<a href="/news/detail/'+news.id+'" class="news_title fl">' + news.title + '</a>'
+                content += '<a href="/news/detail/'+news.id+'" class="news_detail fl">' + news.digest + '</a>'
                 content += '<div class="author_info fl">'
                 content += '<div class="source fl">来源：' + news.source + '</div>'
                 content += '<div class="time fl">' + news.create_time + '</div>'
