@@ -1,6 +1,7 @@
 from flask import session, current_app,g
 
 from logic.models import User
+from functools import wraps
 
 
 def do_rank(rank):
@@ -25,6 +26,8 @@ def do_rank(rank):
 #     return user
 def login_in_data(view_func):
     """自定义装饰器获取用户登录信息"""
+    # 还原装饰器修改后的__name__,还有别装饰函数中的描述信息
+    @wraps(view_func)
     def wrapper(*args,**kwargs):
         user_id = session.get('user_id', None)
         user = None

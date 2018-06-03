@@ -5,6 +5,10 @@ from flask import render_template, session, current_app,g
 from logic.utils.comment import login_in_data
 
 
+@news_blue.route('/news_collect')
+@login_in_data
+def new_collect():
+    """新闻收藏"""
 @news_blue.route('/detail/<int:news_id>')
 @login_in_data
 def news_detail(news_id):
