@@ -2,58 +2,39 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>{% block title %} {% endblock title %}</title>
+    <title>{% block title %}{% endblock title %}</title>
     <link rel="stylesheet" type="text/css" href="../../static/news/css/reset.css">
     <link rel="stylesheet" type="text/css" href="../../static/news/css/main.css">
     <script type="text/javascript" src="../../static/news/js/jquery-1.12.4.min.js"></script>
     <script type="text/javascript" src="../../static/news/js/main.js"></script>
-    {% block script %} {% endblock script %}
+    {% block script %}{% endblock  script%}
 </head>
 <body>
     <div class="header_con">
         <div class="header">
             <a href="/" class="logo fl"><img src="../../static/news/images/logo.png" alt="logo"></a>
+            {% block menu_category %}
 
-
+            {% endblock menu_category%}
             {% block user_info %}
-                {% if context.user  %}
+                {% if context.user %}
                     <div class="user_login fr">
                         <img src="{% if context.user.avatar_url %}{{ context.user.avatar_url }}{% else %}../../static/news/images/person01.png{% endif %}" class="lgin_pic">
-                        <a href="#">{{ context.user.mobile }}</a>
+                        <a href="#">{{ context.user.nick_name }}</a>
                         <a href="javascript:;" onclick="logout()">退出</a>
                     </div>
                 {% else %}
-                   <div class="user_btns fr">
+                    <div class="user_btns fr">
                         <a href="javascript:;" class="login_btn">登录</a> / <a href="javascript:;" class="register_btn">注册</a>
-                   </div>
+                    </div>
                 {% endif %}
             {% endblock user_info %}
-
-            <!-- 用户登录后显示下面，隐藏上面 -->
-
         </div>
     </div>
-    
-    <div class="conter_con">
-    {% block list_con %}
-        <ul class="list_con fl">
+    {% block content %}
 
-        </ul>
-    {% endblock list_con %}
-    {% block rank_con %}
-        <div class="rank_con fr">
-            <div class="rank_title">
-                <h3>点击排行</h3>
-            </div>
-            <ul class="rank_list">
-                {% for news in  context.news_clicks %}
-                    <li><span class="{{ loop.index | rank }}">{{ loop.index }}</span><a href="#">{{ news.title }}</a></li>
+    {% endblock content %}
 
-                {% endfor %}
-            </ul>
-        </div>
-    {% endblock rank_con %}
-    </div>
     <div class="footer">        
         <div class="footer_links">
             <a href="">关于我们</a>
@@ -108,7 +89,7 @@
             <div class="form_group">
                 <input type="text" name="code_pwd" id="imagecode" class="code_pwd">
                 <div class="input_tip">图形验证码</div>
-                <img src="" class="get_pic_code" onclick="generateImageCode()">
+                <img src="../../static/news/images/pic_code.png" class="get_pic_code" onclick="generateImageCode()">
                 <div id="register-image-code-err" class="error_tip">图形码不能为空</div>
             </div>
             <div class="form_group">
