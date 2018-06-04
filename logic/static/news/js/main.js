@@ -133,7 +133,7 @@ $(function(){
             contentType:'application/json',
             success:function (response) {
                 if (response.errno =='0'){
-                    alert(response.errmsg)
+
                    location.reload()
                 }else{
                 alert(response.errmsg)

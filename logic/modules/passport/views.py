@@ -172,6 +172,7 @@ def login():
     # 3. 使用手机号查询用户信息
     try:
         user = User.query.filter(User.mobile == mobile).first()
+        print(user,type(user))
     except Exception as e:
         current_app.logger.error(e)
         return jsonify(errno =response_code.RET.DBERR, errmsg = '查询用户数据失败' )
