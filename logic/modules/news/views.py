@@ -1,5 +1,5 @@
 from logic import constants, db, response_code
-from logic.models import User, News
+from logic.models import User, News, Comment
 from . import news_blue
 from flask import render_template, session, current_app, g, abort, jsonify, request
 from logic.utils.comment import login_in_data
@@ -9,18 +9,19 @@ from logic.utils.comment import login_in_data
 @login_in_data
 def news_collect():
     """新闻收藏"""
+
     # 1.获取登录用户信息
     user = g.user
     if not user:
-        return jsonify(errno =response_code.RET.SESSIONERR, errmsg='用户未登录' )
+        return jsonify(errno=response_code.RET.SESSIONERR, errmsg='用户未登录')
+
     # 2. 接受参数：
-    news_id = request.get('new_id')
-    action = request.get('action')
+    news_id = request.json.get('news_id')
+    action = request.json.get('action')
     # 3. 校验参数
     if not all([news_id, action]):
         return jsonify(errno =response_code.RET.PARAMERR, errmsg='缺少参数')
-    if news_id != int(news_id):
-        return jsonify(errno =response_code.RET.PARAMERR, errmsg='参数错误')
+
     if action not in ['collect', 'cancel_collect']:
         return jsonify(errno =response_code.RET.PARAMERR, errmsg='参数错误')
     # 4. 查询当前要收藏或取消收藏的新闻是否存在
@@ -32,11 +33,11 @@ def news_collect():
     if not news:
         return jsonify(errno =response_code.RET.NODATA, errmsg='新闻不存在')
     # 5. 实现收藏和取消收藏
-    if action == 'action':
+    if action == 'collect':
         # 此处判断是为了防止用户重复添加收藏新闻
         if news not in user.collection_news:
            user.collection_news.append(news)
-    if action == 'cancel_collect':
+    else:
         if news in user.collection_news:
             user.collection_news.remove(news)
     try:
@@ -47,14 +48,59 @@ def news_collect():
     # 6. 响应收藏和取消收藏的结果
     return jsonify(errno =response_code.RET.OK, errmsg='OK')
 
+@news_blue.route('/news_comment',methods=['POST'])
+@login_in_data
+def news_comment():
+    """新闻评论"""
+    # 0. 获取登录用户信息
+    user = g.user
+    if not user:
+        return jsonify(errno =response_code.RET.SESSIONERR, errmsg='用户未登录')
+    # 1. 接收参数
+    news_id = request.json.get('news_id')
+    comment_content = request.json.get('comment')
+    parent_id = request.json.get('parent_id')
 
+    # 2.校验参数
+    if not all([comment_content, news_id]):
+        return jsonify(errno =response_code.RET.PARAMERR, errmsg='缺少参数')
+    try:
+        news_id = int(news_id)
+        if parent_id:
+            parent_id = int(news_id)
+    except Exception as e:
+        current_app.logger.error(e)
+        return jsonify(errno =response_code.RET.PARAMERR, errmsg='参数错误')
+    # 3. 查询要评论的新闻是否存在
+    try:
+        news = News.query.get('news_id')
+    except Exception as e:
+        current_app.logger.error(e)
+        return jsonify(errno =response_code.RET.DBERR, errmsg='查询新闻失败')
+    if not news:
+        return jsonify(errno =response_code.RET.NODATA, errmsg='新闻不存在')
+    # 4.实现评论新闻和回复内容
+    comment = Comment()
+    comment.user_id = user.id
+    comment.news_id = news.id
+    comment.content = comment_content
+    if parent_id:
+        comment.parent_id = parent_id
+    try:
+        db.session.add(comment)
+        db.session.commit()
+    except Exception as e:
+        current_app.logger.error(e)
+        return jsonify(errno =response_code.RET.DBERR, errmsg='评论失败')
+
+    # 5. 响应评论结果
+    return jsonify(errno =response_code.RET.Ok, errmsg='Ok')
 
 
 
 
 
 @news_blue.route('/detail/<int:news_id>')
-@login_in_data
 def news_detail(news_id):
     """新闻详情"""
 

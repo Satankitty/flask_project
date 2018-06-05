@@ -24,6 +24,8 @@ def do_rank(rank):
 #         except Exception as e:
 #             current_app.logger.error(e)
 #     return user
+
+
 def login_in_data(view_func):
     """自定义装饰器获取用户登录信息"""
     # 还原装饰器修改后的__name__,还有别装饰函数中的描述信息
