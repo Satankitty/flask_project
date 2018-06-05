@@ -5,7 +5,7 @@ from flask import render_template, session, current_app, g, abort, jsonify, requ
 from logic.utils.comment import login_in_data
 
 
-@news_blue.route('/news_collect', methods=['PSOT'])
+@news_blue.route('/news_collect', methods=['POST'])
 @login_in_data
 def news_collect():
     """新闻收藏"""
@@ -57,16 +57,16 @@ def news_collect():
 @login_in_data
 def news_detail(news_id):
     """新闻详情"""
-    # 1. 获取登录用户信息
-    user = g.user
-    # user = login_in_data()
-    # user_id = session.get('user_id', None)
-    # user = None
-    # if user_id:
-    #     try:
-    #         user = User.query.get(user_id)
-    #     except Exception as e:
-    #         current_app.logger.error(e)
+
+    # 1.获取登录用户信息
+    user_id = session.get('user_id', None)
+    user = None
+    if user_id:
+        # 如果有user_id，说明登录中，就取出User模型对象信息
+        try:
+            user = User.query.get(user_id)
+        except Exception as e:
+            current_app.logger.error(e)
     # 2. 点击排行:查询新闻数据,根据clicks点击属性实现倒序
     news_clicks = []
     try:
