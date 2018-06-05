@@ -5,7 +5,7 @@ from flask import render_template, session, current_app, g, abort, jsonify, requ
 from logic.utils.comment import login_in_data
 
 
-@news_blue.route('/news_collect')
+@news_blue.route('/news_collect', methods=['PSOT'])
 @login_in_data
 def news_collect():
     """新闻收藏"""
