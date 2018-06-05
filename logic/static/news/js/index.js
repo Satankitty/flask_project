@@ -44,8 +44,9 @@ $(function () {
             // TODO 判断页数，去更新新闻数据
             if (!data_querying){
                 data_querying = true;
-                cur_page +=1;
+
                 if (cur_page < total_page){
+                    cur_page +=1;
                     updateNewsData()
                 }
 

@@ -11,6 +11,10 @@
             <span class="comment fr">{{ context.news.comments_count }}</span>
         </div>
         {{ context.news.content | safe }}
+         <a href="javascript:;" class="collected block-center" data-newid="{{ context.news.id }}" style="display: {% if context.is_collected %} block
+        {% else %} none {% endif %};"><span class="out">已收藏</span><span class="over">取消收藏</span></a>
+        <a href="javascript:;" class="collection block-center" data-newid="{{ context.news.id }}" style="display: {% if context.is_collected %} none
+        {% else %} block {% endif %};">收藏</a>
 
 
        {% if context.user %}
