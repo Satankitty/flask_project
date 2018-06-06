@@ -164,4 +164,7 @@ def news_detail(news_id):
         'comments': comment_dict_list
 
     }
+
+
+
     return render_template('news/detail.html',context=context)
