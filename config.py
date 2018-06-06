@@ -13,7 +13,7 @@ class Config(object):
     DEBUG = True
     # 配置MySQL的数据库，其=》app.config[SQLALCHEMY_TRACK_MODIFICATIONS] = False 可以从SQLAlchemy源码查看
 
-    SQLALCHEMY_DATABASE_URI = "mysql://root:8EP3WA6H@127.0.0.1:3306/flask_project"
+    SQLALCHEMY_DATABASE_URI = "mysql://root:mysql@127.0.0.1:3306/flask_project"
     # 不追踪数据库的更改，因为会明显的内存开销
     SQLALCHEMY_TRACK_MODIFICATIONS = Flask
 

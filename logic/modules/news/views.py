@@ -48,6 +48,9 @@ def news_collect():
     # 6. 响应收藏和取消收藏的结果
     return jsonify(errno =response_code.RET.OK, errmsg='OK')
 
+
+
+
 @news_blue.route('/news_comment',methods=['POST'])
 @login_in_data
 def news_comment():
@@ -67,13 +70,13 @@ def news_comment():
     try:
         news_id = int(news_id)
         if parent_id:
-            parent_id = int(news_id)
+            parent_id = int(parent_id)
     except Exception as e:
         current_app.logger.error(e)
         return jsonify(errno =response_code.RET.PARAMERR, errmsg='参数错误')
     # 3. 查询要评论的新闻是否存在
     try:
-        news = News.query.get('news_id')
+        news = News.query.get(news_id)
     except Exception as e:
         current_app.logger.error(e)
         return jsonify(errno =response_code.RET.DBERR, errmsg='查询新闻失败')
@@ -82,7 +85,7 @@ def news_comment():
     # 4.实现评论新闻和回复内容
     comment = Comment()
     comment.user_id = user.id
-    comment.news_id = news.id
+    comment.news_id = news_id
     comment.content = comment_content
     if parent_id:
         comment.parent_id = parent_id
@@ -90,11 +93,16 @@ def news_comment():
         db.session.add(comment)
         db.session.commit()
     except Exception as e:
+        db.session.rollback()
         current_app.logger.error(e)
         return jsonify(errno =response_code.RET.DBERR, errmsg='评论失败')
+    # 构造响应评论内容
+    # data = {
+    #     'comment': comment.to_dict()
+    # }
 
     # 5. 响应评论结果
-    return jsonify(errno =response_code.RET.Ok, errmsg='Ok')
+    return jsonify(errno =response_code.RET.OK, errmsg='OK', data=comment.to_dict())
 
 
 
@@ -137,11 +145,23 @@ def news_detail(news_id):
     is_collected = False
     if news in user.collection_news:
         is_collected = True
+    # 5. 展示新闻评论和评论回复
+    try:
+        comments = Comment.query.filter(Comment.news_id==news_id).order_by(Comment.create_time.desc()).all()
+    except Exception as e:
+        current_app.logger.error(e)
+    comment_dict_list =[]
+    for comment in comments:
+        comment_dict = comment.to_dict()
+        comment_dict_list.append(comment_dict)
+
 
     context = {
         'user':user,
         'news_clicks':news_clicks,
         'news':news.to_dict(),
-        'is_collected':is_collected
+        'is_collected':is_collected,
+        'comments': comment_dict_list
+
     }
     return render_template('news/detail.html',context=context)
