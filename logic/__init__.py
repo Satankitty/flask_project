@@ -69,4 +69,6 @@ def create_app(config_name):
     app.register_blueprint(passport_blue)
     from logic.modules.news import news_blue
     app.register_blueprint(news_blue)
+    from logic.modules.user import user_blue
+    app.register_blueprint(user_blue)
     return app
