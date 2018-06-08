@@ -132,18 +132,31 @@ def news_detail(news_id):
     except Exception as e:
         current_app.logger.error(e)
         db.session.rollback()
+
     is_collected = False
     if news in user.collection_news:
         is_collected = True
     # 5. 展示新闻评论和评论回复
+    comments = []
     try:
         comments = Comment.query.filter(Comment.news_id==news_id).order_by(Comment.create_time.desc()).all()
     except Exception as e:
         current_app.logger.error(e)
+    comment_like_ids= []
+    if user:
+        try:
+            comment_likes = CommentLike.query.filter(CommentLike.user_id ==user_id).all()
+        except Exception as e:
+             current_app.logger.error(e)
+    comment_like_ids = [comment_like.comment_id for comment_like in comment_likes]
     comment_dict_list =[]
     for comment in comments:
         comment_dict = comment.to_dict()
-        comment_dict_list.append(comment_dict)
+        # 为了判断出每条评论当前用户是否评论了，给comment_dict 添加一个key
+        comment_dict['is_like'] = False
+        if comment.id in comment_like_ids:
+            comment_dict['is_like'] = True
+            comment_dict_list.append(comment_dict)
     context = {
         'user':user,
         'news_clicks':news_clicks,

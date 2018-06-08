@@ -127,10 +127,10 @@ def register():
         smscode_server = redis_store.get('SMS:'+mobile)
     except Exception as e:
         current_app.logger.error(e)
-        return jsonify(errno =response_code.RET.DBERR, errmsg = '查询短信验证码失败' )
+        return jsonify(errno=response_code.RET.DBERR, errmsg = '查询短信验证码失败' )
 
     if not smscode_server:
-        return jsonify(errno =response_code.RET.NODATA, errmsg = '短信验证码不存在' )
+        return jsonify(errno=response_code.RET.NODATA, errmsg = '短信验证码不存在' )
     # 4.跟客户传入的短信验证码对比
     if smscode_client != smscode_server:
         return jsonify(errno =response_code.RET.PARAMERR, errmsg = '输入短信验证码错误' )
